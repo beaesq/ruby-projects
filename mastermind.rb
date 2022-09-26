@@ -31,12 +31,12 @@ end
 module Board
   def self.color_to_draw(str)
     case str
-    when 'red' then ' '.bg_red
-    when 'green' then ' '.bg_green
-    when 'brown' then ' '.bg_brown
-    when 'blue' then ' '.bg_blue
-    when 'magenta' then ' '.bg_magenta
-    when 'cyan' then ' '.bg_cyan
+    when 'red' then '■'.red
+    when 'green' then '■'.green
+    when 'brown' then '■'.brown
+    when 'blue' then '■'.blue
+    when 'magenta' then '■'.magenta
+    when 'cyan' then '■'.cyan
     end
   end
 
@@ -58,10 +58,17 @@ module Board
     key[2].times { print "#{key_to_draw('no_key')} " }
   end
 
-  def self.draw_board(code, key)
-    print_code(code)
+  def self.draw_line(index, code, key)
+    print "%02d" % index
     print ' │ '
-    print_key(key.key)
+    print_code(code)
+    print '│ '
+    print_key(key)
+    puts '│'
+  end
+
+  def self.draw_board(size, code_list, key_list)
+    1.upto(size) { |row| draw_line(row, code_list[row-1], key_list[row-1])}
   end
 end
 
@@ -137,6 +144,12 @@ end
 
 class Game; end
 
-input_code = ['blue','blue','green','red']
+keys_list = []
+input_code_list = [['blue','blue','green','red'],['blue','green','green','red'],['blue','magenta','brown','cyan']]
 p correct_code = Code.new(true)
-Board.draw_board(input_code, Key.new(input_code, correct_code.code))
+0.upto(input_code_list.size - 1) do |index|
+  current_key = Key.new(input_code_list[index], correct_code.code)
+  keys_list.push(current_key.key)
+  Board.draw_board(index + 1, input_code_list, keys_list) # change first parameter to input length later
+  puts ''
+end
