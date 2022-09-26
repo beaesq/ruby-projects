@@ -27,18 +27,32 @@ class String
   def reverse_color;  "\e[7m#{self}\e[27m" end
 end
 
-
+# This prints the board and everything in it
 module Board
+  def self.color_to_draw(str)
+    case str
+    when 'red' then ' '.bg_red
+    when 'green' then ' '.bg_green
+    when 'brown' then ' '.bg_brown
+    when 'blue' then ' '.bg_blue
+    when 'magenta' then ' '.bg_magenta
+    when 'cyan' then ' '.bg_cyan
+    end
+  end
 
-  def draw_board; end
+  def self.print_code(code)
+    code.each { |color| print "#{color_to_draw(color)} " }
+  end
 
+  def self.draw_board(code)
+    print_code(code.code)
+  end
 end
 
+# This creates, randomizes, and contains a code
 class Code
-
   def initialize(is_random)
     @code = is_random ? random_code : %w[gray gray gray gray]
-    p @code
   end
 
   def random_code
