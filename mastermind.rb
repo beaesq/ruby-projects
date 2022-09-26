@@ -40,12 +40,28 @@ module Board
     end
   end
 
+  def self.key_to_draw(str)
+    case str
+    when 'black_key' then '◯'.red.bold
+    when 'white_key' then '△'.green.bold
+    when 'no_key' then '🞨'.blue.bold
+    end
+  end
+
   def self.print_code(code)
     code.each { |color| print "#{color_to_draw(color)} " }
   end
 
-  def self.draw_board(code)
-    print_code(code.code)
+  def self.print_key(key)
+    key[0].times { print "#{key_to_draw('black_key')} " }
+    key[1].times { print "#{key_to_draw('white_key')} " }
+    key[2].times { print "#{key_to_draw('no_key')} " }
+  end
+
+  def self.draw_board(code, key)
+    print_code(code)
+    print ' │ '
+    print_key(key.key)
   end
 end
 
@@ -77,4 +93,50 @@ class Code
   attr_reader :code
 end
 
+# Makes an array of the key pegs [black pegs, white pegs, empty spaces]
+class Key
+  def self.count_black_keys(input_code, correct_code)
+    # black key = correct color and position
+    count = 0
+    correct_code.each_with_index { |correct_sqr, index| count += 1 if correct_sqr == input_code[index] }
+    count
+  end
+
+  def self.compare_key_numbers(input_value, correct_value)
+    if correct_value == input_value || correct_value > input_value
+      input_value
+    elsif correct_value < input_value
+      correct_value
+    end
+  end
+
+  def self.count_white_keys(input_code, correct_code)
+    # white key = correct color wrong position
+    correct_count = correct_code.tally
+    input_count = input_code.tally
+    sum = 0
+    correct_count.each_key do |key|
+      sum += compare_key_numbers(input_count[key], correct_count[key]) if input_count.include?(key)
+    end
+    sum
+  end
+
+  def self.check_code(input_code, correct_code)
+    black_keys = count_black_keys(input_code, correct_code)
+    white_keys = count_white_keys(input_code, correct_code) - black_keys
+    no_keys = 4 - black_keys - white_keys
+    [black_keys, white_keys, no_keys]
+  end
+
+  def initialize(input_code, correct_code)
+    @key = Key.check_code(input_code, correct_code)
+  end
+
+  attr_reader :key
+end
+
 class Game; end
+
+input_code = ['blue','blue','green','red']
+p correct_code = Code.new(true)
+Board.draw_board(input_code, Key.new(input_code, correct_code.code))
