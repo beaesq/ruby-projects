@@ -68,7 +68,7 @@ module Board
   end
 
   def self.draw_board(size, code_list, key_list)
-    1.upto(size) { |row| draw_line(row, code_list[row-1], key_list[row-1])}
+    1.upto(size) { |row| draw_line(row, code_list[row - 1], key_list[row - 1]) }
   end
 end
 
@@ -142,14 +142,55 @@ class Key
   attr_reader :key
 end
 
-class Game; end
+class Game
 
-keys_list = []
-input_code_list = [['blue','blue','green','red'],['blue','green','green','red'],['blue','magenta','brown','cyan']]
-p correct_code = Code.new(true)
-0.upto(input_code_list.size - 1) do |index|
-  current_key = Key.new(input_code_list[index], correct_code.code)
-  keys_list.push(current_key.key)
-  Board.draw_board(index + 1, input_code_list, keys_list) # change first parameter to input length later
-  puts ''
+  def game_loop
+    p @input_code_list.push(player_input_code)
+    current_key = Key.new(@input_code_list[0], @correct_code.code)
+    @keys_list.push(current_key.key)
+    Board.draw_board(1, @input_code_list, @keys_list) # change first parameter to input list length later
+    puts ''
+  end
+  
+  def player_input_code
+    input_code = []
+    1.upto(4) do
+      input_code.push(input_color)
+    end
+    input_code
+  end
+
+  def input_color
+    begin
+      print 'Enter a color: '
+      input = gets.chomp
+      (raise 'Please enter a color from the list.') if %w[red green brown blue cyan magenta].none?(input)
+    rescue StandardError => e
+      puts e.message
+      retry
+    end
+    input
+  end
+
+  def initialize
+    @input_code_list = []
+    @keys_list = []
+    p @correct_code = Code.new(true)
+  end
+
+  
+
 end
+
+game = Game.new
+game.game_loop
+
+# keys_list = []
+# input_code_list = [['blue','blue','green','red'],['blue','green','green','red'],['blue','magenta','brown','cyan']]
+# p correct_code = Code.new(true)
+# 0.upto(input_code_list.size - 1) do |index|
+#   current_key = Key.new(input_code_list[index], correct_code.code)
+#   keys_list.push(current_key.key)
+#   Board.draw_board(index + 1, input_code_list, keys_list) # change first parameter to input list length later
+#   puts ''
+# end
