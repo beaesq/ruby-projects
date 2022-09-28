@@ -69,6 +69,7 @@ module Board
 
   def self.draw_board(size, code_list, key_list)
     1.upto(size) { |row| draw_line(row, code_list[row - 1], key_list[row - 1]) }
+    puts ''
   end
 end
 
@@ -143,15 +144,37 @@ class Key
 end
 
 class Game
-
   def game_loop
-    p @input_code_list.push(player_input_code)
-    current_key = Key.new(@input_code_list[0], @correct_code.code)
+    for i in 1..12
+      is_game_won = play_round(i)
+      if is_game_won
+        game_win
+      elsif i == 12
+        game_lose
+      end
+    end
+  end
+
+  def play_round(i)
+    @input_code_list.push(player_input_code)
+    current_key = Key.new(@input_code_list[i - 1], @correct_code.code)
     @keys_list.push(current_key.key)
-    Board.draw_board(1, @input_code_list, @keys_list) # change first parameter to input list length later
-    puts ''
+    Board.draw_board(i, @input_code_list, @keys_list)
+    codes_match?(current_key.key)
+  end
+
+  def game_lose
+    puts "You didn't guess the code :("
+  end
+
+  def codes_match?(current_key)
+    current_key == [4, 0, 0]
   end
   
+  def game_win
+    puts 'Congratulations! You Guessed The Code!'
+  end
+
   def player_input_code
     input_code = []
     1.upto(4) do
@@ -175,7 +198,7 @@ class Game
   def initialize
     @input_code_list = []
     @keys_list = []
-    p @correct_code = Code.new(true)
+    @correct_code = Code.new(true)
   end
 
   
