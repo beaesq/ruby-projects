@@ -64,12 +64,48 @@ module Board
     print_code(code)
     print '│ '
     print_key(key)
-    puts '│'
+    print '│'
+    draw_legend(index)
+    puts ''
+  end
+
+  def self.draw_empty_line(index)
+    print "%02d" % index
+    print " │ #{'◦'.gray} #{'◦'.gray} #{'◦'.gray} #{'◦'.gray} │ #{'◦'.gray} #{'◦'.gray} #{'◦'.gray} #{'◦'.gray} │"
+    draw_legend(index)
+    puts ''
   end
 
   def self.draw_board(size, code_list, key_list)
+    clear
     1.upto(size) { |row| draw_line(row, code_list[row - 1], key_list[row - 1]) }
+    (size + 1).upto(12) { |row| draw_empty_line(row) }
     puts ''
+  end
+
+  def self.draw_legend(row)
+    print '          '
+    print case row
+          when 1 then 'KEY'
+          when 2 then '◯ correct color & position'.red
+          when 3 then '△ correct color, wrong position'.green
+          when 4 then '🞨 wrong color & position'.blue
+          when 5 then 'COLORS'
+          when 6 then '■ red'.red
+          when 7 then '■ blue'.blue
+          when 8 then '■ green'.green
+          when 9 then '■ brown'.brown
+          when 10 then '■ magenta'.magenta
+          when 11 then '■ cyan'.cyan
+          end
+  end
+
+  def self.clear
+    if Gem.win_platform?
+      system 'cls'
+    else
+      system 'clear'
+    end
   end
 end
 
@@ -145,21 +181,22 @@ end
 
 class Game
   def game_loop
-    for i in 1..12
-      is_game_won = play_round(i)
+    for round_num in 1..12
+      is_game_won = play_round(round_num)
       if is_game_won
         game_win
-      elsif i == 12
+        break
+      elsif round_num == 12
         game_lose
       end
     end
   end
 
-  def play_round(i)
+  def play_round(round_num)
     @input_code_list.push(player_input_code)
-    current_key = Key.new(@input_code_list[i - 1], @correct_code.code)
+    current_key = Key.new(@input_code_list[round_num - 1], @correct_code.code)
     @keys_list.push(current_key.key)
-    Board.draw_board(i, @input_code_list, @keys_list)
+    Board.draw_board(round_num, @input_code_list, @keys_list)
     codes_match?(current_key.key)
   end
 
@@ -170,7 +207,7 @@ class Game
   def codes_match?(current_key)
     current_key == [4, 0, 0]
   end
-  
+
   def game_win
     puts 'Congratulations! You Guessed The Code!'
   end
@@ -178,6 +215,7 @@ class Game
   def player_input_code
     input_code = []
     1.upto(4) do
+      input_color_display(input_code)
       input_code.push(input_color)
     end
     input_code
@@ -185,7 +223,6 @@ class Game
 
   def input_color
     begin
-      print 'Enter a color: '
       input = gets.chomp
       (raise 'Please enter a color from the list.') if %w[red green brown blue cyan magenta].none?(input)
     rescue StandardError => e
@@ -195,10 +232,18 @@ class Game
     input
   end
 
+  def input_color_display(input_code)
+    print 'Your guess: '
+    1.upto(input_code.size) { |i| print "#{Board.color_to_draw(input_code[i - 1])} " } unless input_code.empty?
+    4.downto(input_code.size + 1) { print "#{'◦'.gray} " }
+    print '  Enter a color: '
+  end
+
   def initialize
     @input_code_list = []
     @keys_list = []
     @correct_code = Code.new(true)
+    Board.draw_board(0, [], [])
   end
 
   
