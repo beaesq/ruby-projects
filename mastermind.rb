@@ -134,7 +134,7 @@ class Code
     end
   end
 
-  attr_reader :code
+  attr_accessor :code
 end
 
 # Makes an array of the key pegs [black pegs, white pegs, empty spaces]
@@ -233,7 +233,7 @@ class Game
   end
 
   def input_color_display(input_code)
-    print 'Your guess: '
+    print 'Your code: '
     1.upto(input_code.size) { |i| print "#{Board.color_to_draw(input_code[i - 1])} " } unless input_code.empty?
     4.downto(input_code.size + 1) { print "#{'◦'.gray} " }
     print '  Enter a color: '
@@ -242,23 +242,38 @@ class Game
   def initialize
     @input_code_list = []
     @keys_list = []
-    @correct_code = Code.new(true)
     Board.draw_board(0, [], [])
+    @game_type = ask_game_type
+    if @game_type == 1
+      @correct_code = Code.new(true)
+    else
+      @correct_code = Code.new(false)
+      p @correct_code.code = input_correct_code
+    end
   end
 
-  
+  def input_correct_code
+    puts 'Enter your code.'
+    player_input_code
+  end
 
+  def ask_game_type
+    puts 'Would you like to play as the codebreaker or the codemaker?'
+    input_game_type
+  end
+
+  def input_game_type
+    begin
+      print 'Enter 1 for codebreaker, 2 for codemaker: '
+      choice = gets.chomp.to_i
+      (raise 'Please enter either 1 or 2.') unless [1, 2].include?(choice)
+    rescue StandardError => e
+      puts e.message
+      retry
+    end
+    choice
+  end
 end
 
 game = Game.new
 game.game_loop
-
-# keys_list = []
-# input_code_list = [['blue','blue','green','red'],['blue','green','green','red'],['blue','magenta','brown','cyan']]
-# p correct_code = Code.new(true)
-# 0.upto(input_code_list.size - 1) do |index|
-#   current_key = Key.new(input_code_list[index], correct_code.code)
-#   keys_list.push(current_key.key)
-#   Board.draw_board(index + 1, input_code_list, keys_list) # change first parameter to input list length later
-#   puts ''
-# end
