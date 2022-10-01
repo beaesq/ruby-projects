@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'pry-byebug'
-
 # terminal colorizer
 class String
   def black;          "\e[30m#{self}\e[0m" end
