@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'pry-byebug'
+
 # terminal colorizer
 class String
   def black;          "\e[30m#{self}\e[0m" end
@@ -179,7 +181,92 @@ class Key
   attr_reader :key
 end
 
+# methods for when the computer acts as codebreaker
+module MastermindAI
+  def computer_input_code(round_num)
+    return first_input if round_num == 1
+
+    update_allowed_colors(round_num - 2)
+    p computer_make_code(round_num - 2)
+  end
+
+  def computer_make_code(last_round_num)
+    new_code = [nil, nil, nil, nil]
+    p old_code = @input_code_list[last_round_num]
+    p current_key = @keys_list[last_round_num]
+    choose_colors_different_position(current_key, new_code, old_code)
+    choose_colors_same_position(current_key, new_code, old_code)
+    random_color_in_empty_space(new_code)
+    raise if code_been_used?(new_code)
+
+    new_code
+  rescue StandardError
+    retry
+  end
+
+  private
+
+  def code_been_used?(new_code)
+    @input_code_list.include?(new_code)
+  end
+
+  def choose_colors_different_position(current_key, new_code, old_code)
+    current_key[1].times { new_code[rand(0..3)] = old_code[rand(0..3)] }
+  end
+
+  def choose_colors_same_position(current_key, new_code, old_code)
+    current_key[0].times do
+      index = 0
+      index = rand(0..3) until new_code[index].nil?
+      new_code[index] = old_code[index]
+    end
+  end
+
+  def random_color_in_empty_space(new_code)
+    new_code.map! { |element| element.nil? ? number_to_color(@allowed_colors.sample) : element }
+  end
+
+  def update_allowed_colors(last_round_num)
+    return unless @keys_list[last_round_num] == [0, 0, 4]
+
+    old_code = @input_code_list[last_round_num]
+    old_code.map { |color| @allowed_colors.delete(color_to_number(color)) }
+  end
+
+  def first_input
+    @allowed_colors = [1, 2, 3, 4, 5, 6]
+    color1 = number_to_color(@allowed_colors.sample)
+    color2 = number_to_color(@allowed_colors.sample)
+    [color1, color1, color2, color2]
+  end
+
+  def color_to_number(color)
+    case color
+    when 'red' then 1
+    when 'green' then 2
+    when 'brown' then 3
+    when 'blue' then 4
+    when 'magenta' then 5
+    when 'cyan' then 6
+    end
+  end
+
+  def number_to_color(num)
+    case num
+    when 1 then 'red'
+    when 2 then 'green'
+    when 3 then 'brown'
+    when 4 then 'blue'
+    when 5 then 'magenta'
+    when 6 then 'cyan'
+    end
+  end
+end
+
+# main game content
 class Game
+  include MastermindAI
+
   def game_loop
     for round_num in 1..12
       is_game_won = play_round(round_num)
@@ -193,7 +280,8 @@ class Game
   end
 
   def play_round(round_num)
-    @input_code_list.push(player_input_code)
+    input_code = @game_type == 1 ? player_input_code : computer_input_code(round_num)
+    @input_code_list.push(input_code)
     current_key = Key.new(@input_code_list[round_num - 1], @correct_code.code)
     @keys_list.push(current_key.key)
     Board.draw_board(round_num, @input_code_list, @keys_list)
@@ -201,7 +289,7 @@ class Game
   end
 
   def game_lose
-    puts "You didn't guess the code :("
+    @game_type == 1 ? (puts "You didn't guess the code :(") : (puts 'Congratulations! Mankind Triumphs Over The Machine')
   end
 
   def codes_match?(current_key)
@@ -209,7 +297,7 @@ class Game
   end
 
   def game_win
-    puts 'Congratulations! You Guessed The Code!'
+    @game_type == 1 ? (puts 'Congratulations! You Guessed The Code!') : (puts 'Oh no! Your code was guessed :(')
   end
 
   def player_input_code
