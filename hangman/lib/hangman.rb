@@ -3,10 +3,11 @@ class Game
     @guessed_letters = []
     @wrong_guesses = 0
     @correct_word = random_word
+    @correct_word_array = @correct_word.split(//).uniq
   end
 
   attr_accessor :guessed_letters, :wrong_guesses
-  attr_reader :correct_word
+  attr_reader :correct_word, :correct_word_array
 
   private
   def random_word
@@ -37,7 +38,7 @@ def draw_hangman(num)
 end
 
 def input_letter
-  print 'Enter a letter: '
+  print 'Guess a letter: '
   letter = gets.chomp
   raise 'Please enter a letter.' unless letter.match?(/[a-zA-Z]/)
   letter.downcase
@@ -46,8 +47,28 @@ rescue StandardError => e
 end
 
 def draw_screen(current_game)
-  clear
+  # clear
   draw_hangman(current_game.wrong_guesses)
+  display_word(current_game)
+  print_incorrect_letters(current_game)
+end
+
+def print_incorrect_letters(current_game)
+  print 'Incorrect letters: '
+  arr = current_game.guessed_letters - current_game.correct_word_array
+  arr.each { |char| print "#{char} "}
+  puts ''
+end
+
+def display_word(current_game)
+  current_game.correct_word.each_char do |char|
+    if current_game.guessed_letters.include?(char)
+      print "#{char} "
+    else
+      print '▁ '
+    end
+  end
+  puts ''
 end
 
 def clear
@@ -63,13 +84,17 @@ def game_over?(current_game)
 end
 
 def is_word_guessed?(current_game)
-  word_array = current_game.correct_word.split(//).uniq
-  (current_game.guessed_letters & word_array).size == word_array.size
+  (current_game.guessed_letters & current_game.correct_word_array).size == current_game.correct_word_array.size
 end
 
 current_game = Game.new
-until game_over?(current_game) do 
-  draw_screen(current_game)
-end
-# %w[a b c d e f g h i j k l m n]
-# %w[a b c d e f g h i j k l m n o p q r s t u v w x y z]
+# until game_over?(current_game) do
+#   draw_screen(current_game)
+# end
+p current_game.correct_word
+
+draw_screen(current_game)
+current_game.guessed_letters = %w[a b c d e f g h i j k l m n]
+draw_screen(current_game)
+current_game.guessed_letters = %w[a b c d e f g h i j k l m n o p q r s t u v w x y z]
+draw_screen(current_game)
