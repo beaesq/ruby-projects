@@ -37,17 +37,20 @@ def draw_hangman(num)
   puts '═╩════════'
 end
 
-def input_letter
+def input_letter(guessed_letters)
   print 'Guess a letter: '
   letter = gets.chomp
   raise 'Please enter a letter.' unless letter.match?(/[a-zA-Z]/)
+  raise 'Please enter only one letter.' if letter.length > 1
+  raise 'Please enter a new letter.' if guessed_letters.include?(letter.downcase)
   letter.downcase
 rescue StandardError => e
+  puts e.message
   retry
 end
 
 def draw_screen(current_game)
-  # clear
+  clear
   draw_hangman(current_game.wrong_guesses)
   display_word(current_game)
   print_incorrect_letters(current_game)
@@ -87,14 +90,29 @@ def is_word_guessed?(current_game)
   (current_game.guessed_letters & current_game.correct_word_array).size == current_game.correct_word_array.size
 end
 
+def print_game_over(current_game)
+  (puts "oh no! the word was #{current_game.correct_word} :P") if current_game.wrong_guesses >= 6
+  (puts 'you guessed the word :o') if is_word_guessed?(current_game)
+end
+
+def check_wrong_guess(current_game, letter)
+  current_game.wrong_guesses += 1 if current_game.correct_word_array.none?(letter)
+end
+
 current_game = Game.new
-# until game_over?(current_game) do
-#   draw_screen(current_game)
-# end
-p current_game.correct_word
+# p current_game.correct_word
+until game_over?(current_game) do
+  draw_screen(current_game)
+  letter = input_letter(current_game.guessed_letters)
+  current_game.guessed_letters.push(letter)
+  check_wrong_guess(current_game, letter)
+end
 
 draw_screen(current_game)
-current_game.guessed_letters = %w[a b c d e f g h i j k l m n]
-draw_screen(current_game)
-current_game.guessed_letters = %w[a b c d e f g h i j k l m n o p q r s t u v w x y z]
-draw_screen(current_game)
+print_game_over(current_game)
+
+# draw_screen(current_game)
+# current_game.guessed_letters = %w[a b c d e f g h i j k l m n]
+# draw_screen(current_game)
+# current_game.guessed_letters = %w[a b c d e f g h i j k l m n o p q r s t u v w x y z]
+# draw_screen(current_game)
