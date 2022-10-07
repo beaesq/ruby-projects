@@ -30,14 +30,33 @@ class Game
   end
 
   def load_game
-    data = load_data
-    @guessed_letters = data[:guessed_letters]
-    @wrong_guesses = data[:wrong_guesses]
-    @correct_word = data[:correct_word]
-    @correct_word_array = data[:correct_word_array]
+    p data = load_data
+    @guessed_letters = data['guessed_letters']
+    @wrong_guesses = data['wrong_guesses']
+    @correct_word = data['correct_word']
+    @correct_word_array = data['correct_word_array']
   end
 
-  def load_data; end
+  def load_data
+    filename = input_loadfile_name
+    data = File.open(filename, 'r') { |file| file.readline }
+    JSON.parse(data)
+  end
+
+  def input_loadfile_name
+    puts 'Your save files:'
+    puts Dir.glob('*.json').join(' ').gsub('.json', '')
+    begin
+      print 'Enter the file name: '
+      filename = gets.chomp
+      raise 'Please enter a valid file name.' unless File.exist?("#{filename}.json")
+
+      "#{filename}.json"
+    rescue StandardError => e
+      puts e.message
+      retry
+    end
+  end
 
   def input_savefile_name
     print 'Name your save file (only alphanumberic chars and _ please): '
@@ -52,10 +71,10 @@ class Game
 
   def make_hash
     {
-      'guessed_letters': @guessed_letters,
-      'wrong_guesses': @wrong_guesses,
-      'correct_word': @correct_word,
-      'correct_word_array': @correct_word_array
+      guessed_letters: @guessed_letters,
+      wrong_guesses: @wrong_guesses,
+      correct_word: @correct_word,
+      correct_word_array: @correct_word_array
     }
   end
 
@@ -157,6 +176,7 @@ def input_start_game
   print 'Enter 1 to start a new game, 2 to load a previous game: '
   input = gets.chomp
   raise 'Please enter 1 or 2.' unless %w[1 2].include?(input)
+  raise 'No save games to load.' if input == '2' && Dir.glob('*.json').length.zero?
 
   input.to_i
 rescue StandardError => e
