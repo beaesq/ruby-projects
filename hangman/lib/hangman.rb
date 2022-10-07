@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'json'
+
 # contains game data
 class Game
   def initialize
@@ -12,7 +14,33 @@ class Game
   attr_accessor :guessed_letters, :wrong_guesses
   attr_reader :correct_word, :correct_word_array
 
+  def save
+    data = make_hash
+    filename = input_savefile_name
+    File.open("#{filename}.json", 'w') { |file| file.puts(JSON.dump(data)) }
+  end
+
   private
+
+  def input_savefile_name
+    print 'Name your save file (only alphanumberic chars and _ please): '
+    name = gets.chomp
+    raise 'Only alphanumberic characters and _ please.' unless name.match?(/^[0-9a-zA-Z_]+$/)
+
+    name
+  rescue StandardError => e
+    puts e.message
+    retry
+  end
+
+  def make_hash
+    {
+      'guessed_letters': @guessed_letters,
+      'wrong_guesses': @wrong_guesses,
+      'correct_word': @correct_word,
+      'correct_word_array': @correct_word_array
+    }
+  end
 
   def random_word
     word = ''
@@ -41,12 +69,16 @@ def draw_hangman(num)
   puts '═╩════════'
 end
 
-def input_letter(guessed_letters)
-  print 'Guess a letter: '
+def input_letter(current_game)
+  print "Guess a letter (or enter 'save' to save your game): "
   letter = gets.chomp
+  if letter == 'save'
+    current_game.save
+    raise 'Game saved.'
+  end
   raise 'Please enter a letter.' unless letter.match?(/[a-zA-Z]/)
   raise 'Please enter only one letter.' if letter.length > 1
-  raise 'Please enter a new letter.' if guessed_letters.include?(letter.downcase)
+  raise 'Please enter a new letter.' if current_game.guessed_letters.include?(letter.downcase)
 
   letter.downcase
 rescue StandardError => e
@@ -88,7 +120,7 @@ def clear
 end
 
 def game_over?(current_game)
-  current_game.wrong_guesses >= 6 || is_word_guessed?(current_game)
+  current_game.wrong_guesses >= 6 || word_guessed?(current_game)
 end
 
 def word_guessed?(current_game)
@@ -108,7 +140,7 @@ current_game = Game.new
 # p current_game.correct_word
 until game_over?(current_game)
   draw_screen(current_game)
-  letter = input_letter(current_game.guessed_letters)
+  letter = input_letter(current_game)
   current_game.guessed_letters.push(letter)
   check_wrong_guess(current_game, letter)
 end
