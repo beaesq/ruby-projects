@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# contains game data
 class Game
   def initialize
     @guessed_letters = []
@@ -10,9 +13,10 @@ class Game
   attr_reader :correct_word, :correct_word_array
 
   private
+
   def random_word
     word = ''
-    until word.length <= 12 && word.length >= 5 do 
+    until word.length <= 12 && word.length >= 5
       word_file = File.open('google-10000-english-no-swears.txt', 'r')
       rand(1..9894).times { word = word_file.gets.chomp }
       word_file.close
@@ -43,6 +47,7 @@ def input_letter(guessed_letters)
   raise 'Please enter a letter.' unless letter.match?(/[a-zA-Z]/)
   raise 'Please enter only one letter.' if letter.length > 1
   raise 'Please enter a new letter.' if guessed_letters.include?(letter.downcase)
+
   letter.downcase
 rescue StandardError => e
   puts e.message
@@ -86,13 +91,13 @@ def game_over?(current_game)
   current_game.wrong_guesses >= 6 || is_word_guessed?(current_game)
 end
 
-def is_word_guessed?(current_game)
+def word_guessed?(current_game)
   (current_game.guessed_letters & current_game.correct_word_array).size == current_game.correct_word_array.size
 end
 
 def print_game_over(current_game)
   (puts "oh no! the word was #{current_game.correct_word} :P") if current_game.wrong_guesses >= 6
-  (puts 'you guessed the word :o') if is_word_guessed?(current_game)
+  (puts 'you guessed the word :o') if word_guessed?(current_game)
 end
 
 def check_wrong_guess(current_game, letter)
@@ -101,7 +106,7 @@ end
 
 current_game = Game.new
 # p current_game.correct_word
-until game_over?(current_game) do
+until game_over?(current_game)
   draw_screen(current_game)
   letter = input_letter(current_game.guessed_letters)
   current_game.guessed_letters.push(letter)
