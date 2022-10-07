@@ -4,11 +4,11 @@ require 'json'
 
 # contains game data
 class Game
-  def initialize
-    @guessed_letters = []
-    @wrong_guesses = 0
-    @correct_word = random_word
-    @correct_word_array = @correct_word.split(//).uniq
+  def initialize(type)
+    case type
+    when 1 then new_game
+    when 2 then load_game
+    end
   end
 
   attr_accessor :guessed_letters, :wrong_guesses
@@ -21,6 +21,23 @@ class Game
   end
 
   private
+
+  def new_game
+    @guessed_letters = []
+    @wrong_guesses = 0
+    @correct_word = random_word
+    @correct_word_array = @correct_word.split(//).uniq
+  end
+
+  def load_game
+    data = load_data
+    @guessed_letters = data[:guessed_letters]
+    @wrong_guesses = data[:wrong_guesses]
+    @correct_word = data[:correct_word]
+    @correct_word_array = data[:correct_word_array]
+  end
+
+  def load_data; end
 
   def input_savefile_name
     print 'Name your save file (only alphanumberic chars and _ please): '
@@ -136,7 +153,19 @@ def check_wrong_guess(current_game, letter)
   current_game.wrong_guesses += 1 if current_game.correct_word_array.none?(letter)
 end
 
-current_game = Game.new
+def input_start_game
+  print 'Enter 1 to start a new game, 2 to load a previous game: '
+  input = gets.chomp
+  raise 'Please enter 1 or 2.' unless %w[1 2].include?(input)
+
+  input.to_i
+rescue StandardError => e
+  puts e.message
+  retry
+end
+
+puts 'Welcome!'
+current_game = Game.new(input_start_game)
 # p current_game.correct_word
 until game_over?(current_game)
   draw_screen(current_game)
