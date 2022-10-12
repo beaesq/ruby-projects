@@ -76,8 +76,3 @@ class Array
     end
   end
 end
-
-
-# test = [1, 1, 2, 3, 5, 8, 13, 21, 34]
-
-# p test.my_each_with_index
