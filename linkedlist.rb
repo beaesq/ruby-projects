@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# singly linked list
 class LinkedList
   def initialize
     @head = nil
@@ -34,6 +37,7 @@ class LinkedList
     count = 0
     current_node = @head
     return count if @head.nil? && @tail.nil?
+
     until current_node.nil?
       count += 1
       current_node = current_node.next_node
@@ -42,7 +46,7 @@ class LinkedList
   end
 
   def at(index)
-    return nil if index >= size || index < 0
+    return nil if index >= size || index.negative
 
     current_node = @head
     index.times do 
@@ -62,6 +66,7 @@ class LinkedList
     current_node = @head
     until current_node.nil?
       return true if current_node.value == value
+
       current_node = current_node.next_node
     end
     false
@@ -72,6 +77,7 @@ class LinkedList
     index = 0
     until current_node.nil?
       return index if current_node.value == value
+
       index += 1
       current_node = current_node.next_node
     end
@@ -89,15 +95,17 @@ class LinkedList
   end
 
   def insert_at(value, index)
-    return nil if index > size || index < 0
-    return prepend(value) if index == 0
+    return nil if index > size || index.negative?
+    return prepend(value) if index.zero?
+
     new_node = Node.new(value, at(index))
     at(index - 1).next_node = new_node
     new_node
   end
 
   def remove_at(index)
-    return nil if index >= size || index < 0
+    return nil if index >= size || index.negative?
+
     old_node = at(index)
     if index.zero?
       @head = at(index + 1)
@@ -108,6 +116,7 @@ class LinkedList
   end
 end
 
+# singly linked list node
 class Node
   def initialize(value = nil, next_node = nil)
     @value = value
@@ -116,33 +125,3 @@ class Node
 
   attr_accessor :value, :next_node
 end
-
-p list = LinkedList.new
-# p "head: #{list.head} tail: #{list.tail}"
-list.append('dog')
-list.append('cat')
-list.prepend('rock')
-p list.to_s
-list.insert_at('chicken', 2)
-p list.to_s
-list.insert_at('pig', 0)
-p list.to_s
-list.insert_at('bird', 5)
-p list.to_s
-
-list.remove_at(6)
-p list.to_s
-list.remove_at(5)
-p list.to_s
-list.remove_at(3)
-p list.to_s
-list.remove_at(0)
-p list.to_s
-# pp list
-# p "0: #{list.at(0).value}"
-# p "1: #{list.at(1).value}"
-# p "2: #{list.at(2).value}"
-# p list.find('rock')
-# p list.find('dog')
-# p list.find('cat')
-# p list.find('chicken')
