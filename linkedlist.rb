@@ -15,6 +15,7 @@ class LinkedList
       @tail.next_node = new_node
     end
     @tail = new_node
+    new_node
   end
 
   def prepend(value)
@@ -26,6 +27,7 @@ class LinkedList
       new_node.next_node = @head
       @head = new_node
     end
+    new_node
   end
 
   def size
@@ -85,6 +87,25 @@ class LinkedList
     end
     str << 'nil'
   end
+
+  def insert_at(value, index)
+    return nil if index > size || index < 0
+    return prepend(value) if index == 0
+    new_node = Node.new(value, at(index))
+    at(index - 1).next_node = new_node
+    new_node
+  end
+
+  def remove_at(index)
+    return nil if index >= size || index < 0
+    old_node = at(index)
+    if index.zero?
+      @head = at(index + 1)
+    else
+      at(index - 1).next_node = at(index + 1)
+    end
+    old_node
+  end
 end
 
 class Node
@@ -98,12 +119,24 @@ end
 
 p list = LinkedList.new
 # p "head: #{list.head} tail: #{list.tail}"
-p list.to_s
 list.append('dog')
-p list.to_s
 list.append('cat')
-p list.to_s
 list.prepend('rock')
+p list.to_s
+list.insert_at('chicken', 2)
+p list.to_s
+list.insert_at('pig', 0)
+p list.to_s
+list.insert_at('bird', 5)
+p list.to_s
+
+list.remove_at(6)
+p list.to_s
+list.remove_at(5)
+p list.to_s
+list.remove_at(3)
+p list.to_s
+list.remove_at(0)
 p list.to_s
 # pp list
 # p "0: #{list.at(0).value}"
