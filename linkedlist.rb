@@ -38,6 +38,23 @@ class LinkedList
     end
     count
   end
+
+  def at(index)
+    return nil if index >= size || index < 0
+
+    current_node = @head
+    index.times do 
+      current_node = current_node.next_node
+    end
+    current_node
+  end
+
+  def pop
+    old_tail = @tail
+    @tail = at(size - 2)
+    @tail.next_node = nil
+    old_tail
+  end
 end
 
 class Node
@@ -53,6 +70,12 @@ p list = LinkedList.new
 # p "head: #{list.head} tail: #{list.tail}"
 list.append('dog')
 list.append('cat')
-pp list
 list.prepend('rock')
 pp list
+p "0: #{list.at(0).value}"
+p "1: #{list.at(1).value}"
+p "2: #{list.at(2).value}"
+p list.size
+p list.pop
+pp list
+p list.size
