@@ -5,6 +5,7 @@ class LinkedList
   end
 
   attr_accessor :name
+  attr_reader :head, :tail
 
   def append(value)
     new_node = Node.new(value, nil)
@@ -26,6 +27,17 @@ class LinkedList
       @head = new_node
     end
   end
+
+  def size
+    count = 0
+    current_node = @head
+    return count if @head.nil? && @tail.nil?
+    until current_node.nil?
+      count += 1
+      current_node = current_node.next_node
+    end
+    count
+  end
 end
 
 class Node
@@ -38,6 +50,7 @@ class Node
 end
 
 p list = LinkedList.new
+# p "head: #{list.head} tail: #{list.tail}"
 list.append('dog')
 list.append('cat')
 pp list
