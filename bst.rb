@@ -65,7 +65,23 @@ class Tree
     return find(data, current_node.right) if data > current_node.data
   end
 
+  def level_order(result = [], queue = [], &block)
+    queue.push(@root) if queue.empty?
+    current_node = queue.shift
+    queue = populate_queue(current_node, queue)
+    block_given? ? result.push(block.call(current_node.data)) : result.push(current_node.data)
+    return result if queue.empty?
+
+    level_order(result, queue, &block)
+  end
+
   private
+
+  def populate_queue(current_node, queue)
+    queue.push(current_node.left) unless current_node.left.nil?
+    queue.push(current_node.right) unless current_node.right.nil?
+    queue
+  end
 
   def insert_node(data, current_node)
     new_node = Node.new(data)
@@ -119,6 +135,5 @@ tree.insert(10)
 tree.insert(2)
 tree.insert(0)
 tree.pretty_print
-p tree.find(11)
-p tree.find(10).data
-p tree.find(1).data
+p (tree.level_order { |a| a + 10 })
+p (tree.level_order)
