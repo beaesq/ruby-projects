@@ -117,6 +117,22 @@ class Tree
     return 1 + depth(given_node, current_node.right) if given_node > current_node
   end
 
+  def balanced?(current_node = @root)
+    return 1 if current_node.nil? 
+
+    left_height = height(current_node.left)
+    right_height = height(current_node.right)
+    return true if (left_height - right_height).abs <= 1 && balanced?(current_node.left) && balanced?(current_node.right)
+
+    false
+  end
+
+  def rebalance
+    arr = inorder
+    new_tree = Tree.new(arr)
+    @root = new_tree.root
+  end
+
   private
 
   def enqueue_level_order(current_node, queue)
@@ -174,10 +190,12 @@ arr = [1, 7, 4, 23, 8, 9, 4, 3, 10, 12, 11]
 p arr.sort.uniq
 tree = Tree.new(arr)
 tree.pretty_print
-
-node = tree.find(11)
-p tree.height(node)
-node = tree.find(8)
-p tree.height(tree.root)
-node = tree.find(7)
-p tree.height(node)
+p tree.balanced?
+tree.insert(14)
+tree.insert(16)
+tree.insert(17)
+tree.pretty_print
+p tree.balanced?
+tree.rebalance
+tree.pretty_print
+p tree.balanced?
