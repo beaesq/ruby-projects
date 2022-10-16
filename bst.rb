@@ -186,16 +186,27 @@ class Tree
   end
 end
 
-arr = [1, 7, 4, 23, 8, 9, 4, 3, 10, 12, 11]
-p arr.sort.uniq
+p arr = Array.new(100) { rand(1..100) }
 tree = Tree.new(arr)
 tree.pretty_print
-p tree.balanced?
-tree.insert(14)
-tree.insert(16)
-tree.insert(17)
+puts "Is the tree balanced? #{tree.balanced?}"
+puts "Level-order: #{tree.level_order}"
+puts "Preorder: #{tree.preorder}"
+puts "Postorder: #{tree.postorder}"
+puts "Inorder: #{tree.inorder}"
+tree.insert(69)
+tree.insert(42)
+tree.insert(99)
+tree.insert(98)
+tree.insert(97)
+tree.insert(5)
 tree.pretty_print
-p tree.balanced?
+puts "Is the tree balanced? #{tree.balanced?}"
+puts 'Rebalancing...'
 tree.rebalance
 tree.pretty_print
-p tree.balanced?
+puts "Is the tree balanced? #{tree.balanced?}"
+puts "Level-order: #{tree.level_order}"
+puts "Preorder: #{tree.preorder}"
+puts "Postorder: #{tree.postorder}"
+puts "Inorder: #{tree.inorder}"
