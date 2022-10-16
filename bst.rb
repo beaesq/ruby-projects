@@ -56,6 +56,15 @@ class Tree
     delete_node(current_node, prev_node) if data == current_node.data
   end
 
+  def find(data, current_node = @root)
+    return current_node if data == current_node.data
+    return nil if data < current_node.data && current_node.left.nil?
+    return nil if data > current_node.data && current_node.right.nil?
+
+    return find(data, current_node.left) if data < current_node.data
+    return find(data, current_node.right) if data > current_node.data
+  end
+
   private
 
   def insert_node(data, current_node)
@@ -110,6 +119,6 @@ tree.insert(10)
 tree.insert(2)
 tree.insert(0)
 tree.pretty_print
-tree.delete(23)
-tree.delete(7)
-tree.pretty_print
+p tree.find(11)
+p tree.find(10).data
+p tree.find(1).data
