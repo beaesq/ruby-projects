@@ -101,6 +101,22 @@ class Tree
     block_given? ? result.push(block.call(current_node.data)) : result.push(current_node.data)
   end
 
+  def height(current_node)
+    return 0 if current_node.nil?
+
+    1 + [height(current_node.left), height(current_node.right)].max
+  end
+
+  def depth(given_node, current_node = @root)
+    return 0 if given_node == current_node
+    return 0 if given_node < current_node && current_node.left.nil?
+    return 0 if given_node > current_node && current_node.right.nil?
+
+    return 1 + depth(given_node, current_node.left) if given_node < current_node
+    return 1 + depth(given_node, current_node.right) if given_node > current_node
+  end
+
+
   private
 
   def enqueue_level_order(current_node, queue)
@@ -154,18 +170,14 @@ class Tree
   end
 end
 
-arr = [1, 7, 4, 23, 8, 9, 4, 3]
+arr = [1, 7, 4, 23, 8, 9, 4, 3, 10, 12, 11]
 p arr.sort.uniq
 tree = Tree.new(arr)
-tree.insert(11)
-tree.insert(2)
-tree.insert(0)
-tree.insert(10)
-tree.insert(12)
 tree.pretty_print
-p (tree.preorder { |a| a + 10 })
-p (tree.preorder)
-p (tree.inorder { |a| a + 10 })
-p (tree.inorder)
-p (tree.postorder { |a| a + 10 })
-p (tree.postorder)
+
+node = tree.find(9)
+p tree.depth(node)
+node = tree.find(8)
+p tree.depth(node)
+node = tree.find(7)
+p tree.depth(node)
