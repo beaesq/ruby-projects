@@ -103,6 +103,7 @@ class Tree
 
   def height(current_node)
     return 0 if current_node.nil?
+    return 0 if current_node.left.nil? && current_node.right.nil?
 
     1 + [height(current_node.left), height(current_node.right)].max
   end
@@ -115,7 +116,6 @@ class Tree
     return 1 + depth(given_node, current_node.left) if given_node < current_node
     return 1 + depth(given_node, current_node.right) if given_node > current_node
   end
-
 
   private
 
@@ -175,9 +175,9 @@ p arr.sort.uniq
 tree = Tree.new(arr)
 tree.pretty_print
 
-node = tree.find(9)
-p tree.depth(node)
+node = tree.find(11)
+p tree.height(node)
 node = tree.find(8)
-p tree.depth(node)
+p tree.height(tree.root)
 node = tree.find(7)
-p tree.depth(node)
+p tree.height(node)
