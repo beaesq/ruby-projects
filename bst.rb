@@ -42,7 +42,9 @@ class Tree
   end
 
   def insert(data, current_node = @root)
-    return insert_node(data, current_node) if current_node.left.nil? || current_node.right.nil?
+    if (data < current_node.data && current_node.left.nil?) || (data > current_node.data && current_node.right.nil?)
+      return insert_node(data, current_node) 
+    end
 
     insert(data, current_node.left) if data < current_node.data
     insert(data, current_node.right) if data > current_node.data
@@ -68,16 +70,40 @@ class Tree
   def level_order(result = [], queue = [], &block)
     queue.push(@root) if queue.empty?
     current_node = queue.shift
-    queue = populate_queue(current_node, queue)
+    queue = enqueue_level_order(current_node, queue)
     block_given? ? result.push(block.call(current_node.data)) : result.push(current_node.data)
     return result if queue.empty?
 
     level_order(result, queue, &block)
   end
 
+  def preorder(result = [], current_node = @root, &block)
+    return result if current_node.nil?
+
+    block_given? ? result.push(block.call(current_node.data)) : result.push(current_node.data)
+    preorder(result, current_node.left, &block)
+    preorder(result, current_node.right, &block)
+  end
+
+  def inorder(result = [], current_node = @root, &block)
+    return result if current_node.nil?
+
+    inorder(result, current_node.left, &block)
+    block_given? ? result.push(block.call(current_node.data)) : result.push(current_node.data)
+    inorder(result, current_node.right, &block)
+  end
+
+  def postorder(result = [], current_node = @root, &block)
+    return result if current_node.nil?
+
+    postorder(result, current_node.left, &block)
+    postorder(result, current_node.right, &block)
+    block_given? ? result.push(block.call(current_node.data)) : result.push(current_node.data)
+  end
+
   private
 
-  def populate_queue(current_node, queue)
+  def enqueue_level_order(current_node, queue)
     queue.push(current_node.left) unless current_node.left.nil?
     queue.push(current_node.right) unless current_node.right.nil?
     queue
@@ -131,9 +157,15 @@ end
 arr = [1, 7, 4, 23, 8, 9, 4, 3]
 p arr.sort.uniq
 tree = Tree.new(arr)
-tree.insert(10)
+tree.insert(11)
 tree.insert(2)
 tree.insert(0)
+tree.insert(10)
+tree.insert(12)
 tree.pretty_print
-p (tree.level_order { |a| a + 10 })
-p (tree.level_order)
+p (tree.preorder { |a| a + 10 })
+p (tree.preorder)
+p (tree.inorder { |a| a + 10 })
+p (tree.inorder)
+p (tree.postorder { |a| a + 10 })
+p (tree.postorder)
