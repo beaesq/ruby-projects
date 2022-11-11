@@ -6,12 +6,19 @@ class Game
     
   end
 
-  def make_grid(col_num = 7, row_num = 6)
-    one_column = Array.new(row_num)
-    Array.new(col_num, one_column)
+  attr_reader :maximum_height, :grid
+
+  def make_grid(col_num = 7, max_height = 6)
+    @maximum_height = max_height
+    grid = []
+    col_num.times { grid << [] }  # workaround for ruby giving me an array with multiple copies of the SAME object
+    grid
   end
 
-  def add_token(col_num, grid = @grid)
-    
+  def add_token(col_num, token, grid = @grid)
+    return grid if col_num >= grid.length || col_num.negative?
+
+    grid[col_num].push(token) unless grid[col_num].length >= @maximum_height
+    grid
   end
 end

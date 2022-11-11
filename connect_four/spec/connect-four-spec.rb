@@ -8,38 +8,51 @@ describe Game do
   let(:player_b) { instance_double(Player, name: 'Yves') }
 
   describe '#make_grid' do
-    it 'creates 7x6 empty grid' do
+    it 'can create a grid with 7 columns with a maximum height of 6' do
       grid_array = new_game.make_grid
       column = grid_array.length
-      rows = []
-      7.times do |index|
-        rows << grid_array[index].length
-      end
-      expect(rows).to all(eq(6))
+      height = new_game.maximum_height
+      expect(height).to eq(6)
       expect(column).to eq(7)
+      expect(grid_array[0]).to eq([]) # bad!
     end
   end
 
   describe '#add_token' do
     before(:each) do
-      test_column = Array.new(6)
-      @test_grid = Array.new(7, test_column)
+      @test_grid = [[], [], [], [], [], [], []]
     end
-    it 'adds token in empty column' do
+    it 'adds token to empty column' do
       column = 0
-      new_game.add_token(column, @test_grid)
-      expect(test_grid[column][0]).not_to eq(nil)
-      expect(test_grid[column][1..5]).to all( be_nil )
+      token = 'O'
+      new_grid = new_game.add_token(column, token, @test_grid)
+      expect(new_grid[column]).to eq([token])
+      expect(new_grid[1..6]).to all(eq([]))
     end
 
-    xit 'adds token non-empty column' do
+    it 'adds token to non-empty column' do
+      column = 6
+      token = 'O'
+      @test_grid[column] = [token, token]
+      new_grid = new_game.add_token(column, token, @test_grid)
+      expect(new_grid[column]).to eq([token, token, token])
+      expect(new_grid[0..5]).to all(eq([]))
     end
 
-    xit 'does not add token when column is full' do
+    it 'does not add token when column is full' do
+      column = 6
+      token = 'O'
+      @test_grid[column] = [token, token, token, token, token, token]
+      new_grid = new_game.add_token(column, token, @test_grid)
+      expect(new_grid[column]).to eq([token, token, token, token, token, token])
+      expect(new_grid[0..5]).to all(eq([]))
     end
 
-    xit 'is not able to add token outside grid' do
-      
+    it 'is not able to add token outside grid' do
+      column = 7
+      token = 'O'
+      new_grid = new_game.add_token(column, token, @test_grid)
+      expect(new_grid[0..6]).to all(eq([]))
     end
   end
 
