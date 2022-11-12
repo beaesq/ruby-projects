@@ -3,7 +3,6 @@
 class Game
   def initialize
     @grid = make_grid
-    
   end
 
   attr_reader :maximum_height, :grid
@@ -20,5 +19,17 @@ class Game
 
     grid[col_num].push(token) unless grid[col_num].length >= @maximum_height
     grid
+  end
+
+  def set_players(token_a = 'O', token_b = '0')
+    @player_a = Player.new(get_player_name(1), token_a)
+    @player_b = Player.new(get_player_name(2), token_b)
+  end
+
+  private
+
+  def get_player_name(player_num)
+    print "Enter player # #{player_num}'s name: "
+    gets.chomp
   end
 end

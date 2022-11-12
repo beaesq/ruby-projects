@@ -57,8 +57,15 @@ describe Game do
   end
 
   describe '#set_players' do
-    xit 'makes two players' do
-      
+    before do
+      allow(new_game).to receive(:gets).and_return('Yves', 'Chuu')
+      allow(new_game).to receive(:print)
+    end
+
+    it 'makes two players' do
+      expect(Player).to receive(:new).with('Yves', 'O').at_most(:once)
+      expect(Player).to receive(:new).with('Chuu', '0').at_most(:once)
+      new_game.set_players
     end
   end
 end
