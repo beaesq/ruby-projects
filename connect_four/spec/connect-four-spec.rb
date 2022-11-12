@@ -68,4 +68,64 @@ describe Game do
       new_game.set_players
     end
   end
+
+  describe '#game_over?' do
+    context 'when game is won' do
+      xit 'returns true' do
+      end
+    end
+    
+    context 'when game is not over' do
+      xit 'returns false' do
+      end
+    end
+  end
+  
+  describe '#win_vertical?' do
+    context 'when four tokens connect vertically' do
+      before do
+        @test_grid = [['X', 'O'], ['X', 'O', 'X', 'O', 'X', 'O'], [], [], ['X', 'O', 'O', 'O', 'O'], ['X'], []]
+      end
+      xit 'returns true' do
+        
+      end
+    end
+    context 'when no tokens connect' do
+      xit 'returns false' do
+      end
+    end
+  end
+
+  describe '#win_horizontal?' do
+    context 'when four tokens connect horizontally' do
+      xit 'returns true' do
+      end
+    end
+    context 'when no tokens connect' do
+      xit 'returns false' do
+      end
+    end
+  end
+
+  describe '#win_diagonal_down?' do
+    context 'when four tokens connect diagonally \\' do
+      xit 'returns true' do
+      end
+    end
+    context 'when no tokens connect' do
+      xit 'returns false' do
+      end
+    end
+  end
+
+  describe '#win_diagonal_up?' do
+    context 'when four tokens connect diagonally /' do
+      xit 'returns true' do
+      end
+    end
+    context 'when no tokens connect' do
+      xit 'returns false' do
+      end
+    end
+  end
 end
