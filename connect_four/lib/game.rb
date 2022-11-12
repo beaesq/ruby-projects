@@ -26,7 +26,26 @@ class Game
     @player_b = Player.new(get_player_name(2), token_b)
   end
 
+  def win_vertical?(token, grid = @grid)
+    match = token * 4
+    grid.length.times do |col_num|
+      grid[col_num]
+      return true if grid[col_num].include?(match)
+    end
+    false
+  end
+
+  def win_horizontal?(token, grid = @grid)
+    match = token * 4
+    hor_array = get_all_horizontal(grid)
+    hor_array.include?(match)
+  end
+
   private
+
+  def get_all_horizontal(grid = @grid)
+    
+  end
 
   def get_player_name(player_num)
     print "Enter player # #{player_num}'s name: "

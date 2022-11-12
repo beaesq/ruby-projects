@@ -87,21 +87,32 @@ describe Game do
   describe '#win_vertical?' do
     context 'when four tokens connect vertically' do
       before do
-        @test_grid = []
+        @test_grid = ['OOXX', 'XOOXOX', 'OOXOOO', 'XXOOOO', 'OOX', 'X', 'OO']
       end
-      xit 'returns true' do
-        
+      it 'returns true' do
+        result = new_game.win_vertical?('O', @test_grid)
+        expect(result).to be true
       end
     end
     context 'when no tokens connect' do
-      xit 'returns false' do
+      before do
+        @test_grid = ['OOXX', 'XOOXOX', 'OOXOOO', 'XXOOXO', 'OOXXXX', 'X', 'OO']
+      end
+      it 'returns false' do
+        result = new_game.win_vertical?('O', @test_grid)
+        expect(result).to be false
       end
     end
   end
 
   describe '#win_horizontal?' do
     context 'when four tokens connect horizontally' do
-      xit 'returns true' do
+      before do
+        @test_grid = ['OOXX', 'XXXX', 'XOXXX', 'OOOXXX', 'OOXXO', 'XOX', 'X']
+      end
+      it 'returns true' do
+        result = new_game.win_horizontal?('O', @test_grid)
+        expect(result).to be true
       end
     end
     context 'when no tokens connect' do
