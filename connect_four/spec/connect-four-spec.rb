@@ -14,45 +14,48 @@ describe Game do
       height = new_game.maximum_height
       expect(height).to eq(6)
       expect(column).to eq(7)
-      expect(grid_array[0]).to eq([]) # bad!
+      expect(grid_array[0]).to eq('') # bad!
     end
   end
 
   describe '#add_token' do
     before(:each) do
-      @test_grid = [[], [], [], [], [], [], []]
+      @test_grid = ['', '', '', '', '', '', '']
     end
     it 'adds token to empty column' do
       column = 0
       token = 'O'
+      correct_column = 'O'
       new_grid = new_game.add_token(column, token, @test_grid)
-      expect(new_grid[column]).to eq([token])
-      expect(new_grid[1..6]).to all(eq([]))
+      expect(new_grid[column]).to eq(correct_column)
+      expect(new_grid[1..6]).to all(eq(''))
     end
 
     it 'adds token to non-empty column' do
       column = 6
       token = 'O'
-      @test_grid[column] = [token, token]
+      correct_column = 'OOO'
+      @test_grid[column] = 'OO'
       new_grid = new_game.add_token(column, token, @test_grid)
-      expect(new_grid[column]).to eq([token, token, token])
-      expect(new_grid[0..5]).to all(eq([]))
+      expect(new_grid[column]).to eq(correct_column)
+      expect(new_grid[0..5]).to all(eq(''))
     end
 
     it 'does not add token when column is full' do
       column = 6
       token = 'O'
-      @test_grid[column] = [token, token, token, token, token, token]
+      correct_column = 'OOOOOO'
+      @test_grid[column] = 'OOOOOO'
       new_grid = new_game.add_token(column, token, @test_grid)
-      expect(new_grid[column]).to eq([token, token, token, token, token, token])
-      expect(new_grid[0..5]).to all(eq([]))
+      expect(new_grid[column]).to eq(correct_column)
+      expect(new_grid[0..5]).to all(eq(''))
     end
 
     it 'is not able to add token outside grid' do
       column = 7
       token = 'O'
       new_grid = new_game.add_token(column, token, @test_grid)
-      expect(new_grid[0..6]).to all(eq([]))
+      expect(new_grid[0..6]).to all(eq(''))
     end
   end
 
@@ -84,7 +87,7 @@ describe Game do
   describe '#win_vertical?' do
     context 'when four tokens connect vertically' do
       before do
-        @test_grid = [['X', 'O'], ['X', 'O', 'X', 'O', 'X', 'O'], [], [], ['X', 'O', 'O', 'O', 'O'], ['X'], []]
+        @test_grid = []
       end
       xit 'returns true' do
         
