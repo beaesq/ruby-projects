@@ -4,7 +4,6 @@ require_relative '../lib/main'
 
 describe Game do
   subject(:new_game) { described_class.new }
-  
 
   describe '#make_grid' do
     it 'can create a grid with 7 columns with a maximum height of 6' do
@@ -71,23 +70,23 @@ describe Game do
     end
   end
 
-  describe '#game_over?' do
+  describe '#game_won?' do
     context 'when game is won' do
       test_grid = ['○◉○○◉', '◉◉○○', '○○○○◉○', '○○◉◉○○', '○○◉◉○', '○◉○○◉○', '○']
       subject(:win_game) { described_class.new(test_grid) }
 
       it 'returns true' do
-        result = win_game.game_over?('◉')
+        result = win_game.game_won?('◉')
         expect(result).to be true
       end
     end
 
-    context 'when game is not over' do
+    context 'when game is not won' do
       test_grid = ['○○○○◉', '◉◉○○', '○○○○◉○', '○○◉◉○○', '○○◉◉○', '○○○○◉○', '○']
       subject(:win_game) { described_class.new(test_grid) }
 
       it 'returns false' do
-        result = win_game.game_over?('◉')
+        result = win_game.game_won?('◉')
         expect(result).to be false
       end
     end
@@ -173,6 +172,40 @@ describe Game do
       it 'returns false' do
         result = new_game.win_diagonal_up?('O', @test_grid)
         expect(result).to be false
+      end
+    end
+  end
+
+  describe '#grid_full?' do
+    context 'when grid is full' do
+      test_grid = ['○○○○○◉', '○○◉◉○○', '○○○○◉○', '○○◉◉○○', '○○◉◉○○', '○○○○◉○', '○○○○○○']
+      subject(:full_game) { described_class.new(test_grid) }
+      it 'return true' do
+        full_game.instance_variable_set(:@maximum_height, 6)
+        expect(full_game).to be_grid_full
+      end
+    end
+
+    context 'when grid is not full' do
+      test_grid = ['○○○○◉', '○○◉◉○○', '○○○○◉○', '○○◉◉○○', '○○◉◉○○', '○○○○◉○', '○○○○○○']
+      subject(:not_full_game) { described_class.new(test_grid) }
+      it 'return false' do
+        not_full_game.instance_variable_set(:@maximum_height, 6)
+        expect(not_full_game).not_to be_grid_full
+      end
+    end
+  end
+
+  describe '#game_loop' do
+    context 'when game is won' do
+      xit 'ends game' do
+        
+      end
+    end
+
+    context 'when grid is filled and no one has won' do
+      xit 'ends game' do
+        
       end
     end
   end

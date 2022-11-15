@@ -26,7 +26,11 @@ class Game
     @player_b = Player.new(get_player_name(2), token_b)
   end
 
-  def game_over?(token)
+  def grid_full?(grid = @grid)
+    grid.all? { |column| column.length == @maximum_height }
+  end
+
+  def game_won?(token)
     win_vertical?(token) || win_horizontal?(token) || win_diagonal_down?(token) || win_diagonal_up?(token)
   end
 
