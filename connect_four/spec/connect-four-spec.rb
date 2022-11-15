@@ -4,8 +4,7 @@ require_relative '../lib/main'
 
 describe Game do
   subject(:new_game) { described_class.new }
-  let(:player_a) { instance_double(Player, name: 'Chuu', token: 'O') }
-  let(:player_b) { instance_double(Player, name: 'Yves') }
+  
 
   describe '#make_grid' do
     it 'can create a grid with 7 columns with a maximum height of 6' do
@@ -66,20 +65,30 @@ describe Game do
     end
 
     it 'makes two players' do
-      expect(Player).to receive(:new).with('Yves', 'O').at_most(:once)
-      expect(Player).to receive(:new).with('Chuu', '0').at_most(:once)
+      expect(Player).to receive(:new).with('Yves', '◉').at_most(:once)
+      expect(Player).to receive(:new).with('Chuu', '○').at_most(:once)
       new_game.set_players
     end
   end
 
   describe '#game_over?' do
     context 'when game is won' do
-      xit 'returns true' do
+      test_grid = ['○◉○○◉', '◉◉○○', '○○○○◉○', '○○◉◉○○', '○○◉◉○', '○◉○○◉○', '○']
+      subject(:win_game) { described_class.new(test_grid) }
+
+      it 'returns true' do
+        result = win_game.game_over?('◉')
+        expect(result).to be true
       end
     end
-    
+
     context 'when game is not over' do
-      xit 'returns false' do
+      test_grid = ['○○○○◉', '◉◉○○', '○○○○◉○', '○○◉◉○○', '○○◉◉○', '○○○○◉○', '○']
+      subject(:win_game) { described_class.new(test_grid) }
+
+      it 'returns false' do
+        result = win_game.game_over?('◉')
+        expect(result).to be false
       end
     end
   end
@@ -116,29 +125,54 @@ describe Game do
       end
     end
     context 'when no tokens connect' do
-      xit 'returns false' do
+      before do
+        @test_grid = ['OOXX', 'XXXX', 'XOXXX', 'OOOXXX', 'OXXO', 'XOX', '']
+      end
+      it 'returns false' do
+        result = new_game.win_horizontal?('O', @test_grid)
+        expect(result).to be false
       end
     end
   end
 
   describe '#win_diagonal_down?' do
     context 'when four tokens connect diagonally \\' do
-      xit 'returns true' do
+      before do
+        @test_grid = ['12345', '9876', 'XXXXOX', 'XXOOXX', 'XXOOX', 'XOXXOX', 'X']
+      end
+      it 'returns true' do
+        result = new_game.win_diagonal_down?('O', @test_grid)
+        expect(result).to be true
       end
     end
     context 'when no tokens connect' do
-      xit 'returns false' do
+      before do
+        @test_grid = ['12345', '9876', 'XXXXXX', 'XXOOXX', 'XXOOX', 'XOXXOX', 'X']
+      end
+      it 'returns false' do
+        result = new_game.win_diagonal_down?('O', @test_grid)
+        expect(result).to be false
       end
     end
   end
 
   describe '#win_diagonal_up?' do
     context 'when four tokens connect diagonally /' do
-      xit 'returns true' do
+      before do
+        @test_grid = ['12345', '9876', 'XOXXXX', 'XXOOXX', 'XXOOX', 'XXXXOX', 'O']
+      end
+      it 'returns true' do
+        result = new_game.win_diagonal_up?('O', @test_grid)
+        expect(result).to be true
       end
     end
     context 'when no tokens connect' do
-      xit 'returns false' do
+      before do
+        @test_grid = ['12345', '9876', 'XOXXXX', 'XXOOXX', 'XXOOX', 'XXXXXX', 'O']
+      end
+      it 'returns false' do
+        result = new_game.win_diagonal_up?('O', @test_grid)
+        expect(result).to be false
       end
     end
   end
