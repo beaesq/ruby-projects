@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Game
-  require 'board'
+  require_relative 'board'
   include Board
 
   def initialize(grid = make_grid)
@@ -15,7 +15,7 @@ class Game
 
   def game_loop
     until game_won?(@current_player.token) || grid_full?
-      display_board(@grid)
+      display_board(@grid, @maximum_height)
       player_add_token(@current_player)
       @current_player = @current_player == @player_a ? @player_b : @player_a
     end

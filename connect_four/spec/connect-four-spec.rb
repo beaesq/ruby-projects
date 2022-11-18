@@ -209,6 +209,7 @@ describe Game do
         win_game.instance_variable_set(:@current_player, player_a)
         win_game.instance_variable_set(:@player_a, player_a)
         win_game.instance_variable_set(:@player_b, player_b)
+        win_game.instance_variable_set(:@maximum_height, 6)
         allow(win_game).to receive(:display_board)
         allow(win_game).to receive(:player_add_token)
         # use for set_players
@@ -218,7 +219,7 @@ describe Game do
         # allow(win_game).to receive(:player_add_token)
       end
       it 'calls display_board and player_add_token one time' do
-        expect(win_game).to receive(:display_board).with(test_grid).once
+        expect(win_game).to receive(:display_board).with(test_grid, 6).once
         expect(win_game).to receive(:player_add_token).once
         win_game.game_loop
       end
@@ -242,11 +243,12 @@ describe Game do
         win_game.instance_variable_set(:@current_player, player_a)
         win_game.instance_variable_set(:@player_a, player_a)
         win_game.instance_variable_set(:@player_b, player_b)
+        win_game.instance_variable_set(:@maximum_height, 6)
         allow(win_game).to receive(:display_board)
         allow(win_game).to receive(:player_add_token)
       end
       it 'calls display_board and player_add_token one time' do
-        expect(win_game).to receive(:display_board).with(test_grid).once
+        expect(win_game).to receive(:display_board).with(test_grid, 6).once
         expect(win_game).to receive(:player_add_token).once
         win_game.game_loop
       end
@@ -299,6 +301,28 @@ describe Game do
         expect(new_game).to receive(:print).once
         result = new_game.check_column_input
         expect(result).to eq(6)
+      end
+    end
+  end
+
+  describe '#arrange_grid_by_row' do
+    context 'when grid has empty columns' do
+      test_grid = ['', '○', '○', '○○', '', '', '◉○']
+      subject(:incomplete_game) { described_class.new(test_grid) }
+      it 'has spaces for empty columns' do
+        maximum_height = 6
+        result_grid = incomplete_game.arrange_grid_by_row(test_grid, maximum_height)
+        expect(result_grid).to eq([' ○○○  ◉', '   ○  ○', '       ', '       ', '       ', '       '])
+      end
+    end
+
+    context 'when grid is full' do
+      test_grid = ['◉○◉○◉○', '◉○◉○◉○', '◉○◉○◉○', '◉○◉○◉○', '◉○◉○◉○', '◉○◉○◉○', '◉○◉○◉○']
+      subject(:full_game) { described_class.new(test_grid) }
+      it 'has spaces for empty columns' do
+        maximum_height = 6
+        result_grid = full_game.arrange_grid_by_row(test_grid, maximum_height)
+        expect(result_grid).to eq(['◉◉◉◉◉◉◉', '○○○○○○○', '◉◉◉◉◉◉◉', '○○○○○○○', '◉◉◉◉◉◉◉', '○○○○○○○'])
       end
     end
   end
