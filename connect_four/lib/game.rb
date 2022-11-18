@@ -1,17 +1,48 @@
 # frozen_string_literal: true
 
 class Game
+  require 'board'
+  include Board
+
   def initialize(grid = make_grid)
     @grid = grid
+    @player_a = nil
+    @player_b = nil
+    @current_player = nil
   end
 
   attr_reader :maximum_height, :grid
+
+  def game_loop
+    until game_won?(@current_player.token) || grid_full?
+      display_board(@grid)
+      player_add_token(@current_player)
+      @current_player = @current_player == @player_a ? @player_b : @player_a
+    end
+  end
 
   def make_grid(col_num = 7, max_height = 6)
     @maximum_height = max_height
     grid = []
     col_num.times { grid << '' }  # workaround for ruby giving me an array with multiple copies of the SAME object
     grid
+  end
+
+  def player_add_token(current_player = @current_player)
+    print "#{current_player.name}'s turn\n"
+    print "Choose which column to add a token to (1-#{@grid.length}): "
+    add_token(check_column_input, current_player.token)
+  end
+
+  def check_column_input
+    input = gets.chomp
+    raise 'Please enter a number: ' unless input.match?(/[0-9]/)
+    raise "Please enter a number within the range 1-#{@grid.length}: " if input.to_i > @grid.length || input.to_i < 1
+
+    input.to_i - 1
+  rescue StandardError => e
+    print e.message
+    retry
   end
 
   def add_token(col_num, token, grid = @grid)
