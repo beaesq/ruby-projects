@@ -212,15 +212,10 @@ describe Game do
         win_game.instance_variable_set(:@maximum_height, 6)
         allow(win_game).to receive(:display_board)
         allow(win_game).to receive(:player_add_token)
-        # use for set_players
-        # allow(win_game).to receive(:get_player_name).and_return('Yves', 'Chuu')
-        # allow(Player).to receive(:new).with('Yves', '◉').and_return(player_a)
-        # allow(Player).to receive(:new).with('Chuu', '○').and_return(player_b)
-        # allow(win_game).to receive(:player_add_token)
       end
       it 'calls display_board and player_add_token one time' do
-        expect(win_game).to receive(:display_board).with(test_grid, 6).once
-        expect(win_game).to receive(:player_add_token).once
+        expect(win_game).to receive(:display_board).with(test_grid, 6, player_a, player_b).twice
+        expect(win_game).to receive(:player_add_token).twice
         win_game.game_loop
       end
 
@@ -248,7 +243,7 @@ describe Game do
         allow(win_game).to receive(:player_add_token)
       end
       it 'calls display_board and player_add_token one time' do
-        expect(win_game).to receive(:display_board).with(test_grid, 6).once
+        expect(win_game).to receive(:display_board).with(test_grid, 6, player_a, player_b).once
         expect(win_game).to receive(:player_add_token).once
         win_game.game_loop
       end
@@ -260,6 +255,10 @@ describe Game do
       end
     end
   end
+
+  # describe '#play_game' do
+    
+  # end
 
   describe '#player_add_token' do
     test_grid = ['', '○', '○', '○', '', '', '']

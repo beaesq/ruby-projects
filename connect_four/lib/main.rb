@@ -6,7 +6,11 @@ require_relative 'player'
 
 
 # # test_grid = ['◉○◉○◉○', '◉○◉○◉○', '◉○◉○◉○', '◉○◉○◉○', '◉○◉○◉○', '◉○◉○◉○', '◉○◉○◉○']
-# # test_grid = [' ○○○  ◉', '   ○  ○', '       ', '       ', '       ', '       ']
+# test_grid = [' ○○○  ◉', '   ○  ○', '       ', '       ', '       ', '       ']
 # test_grid = ['', '○', '○', '○○', '', '', '◉○']
+
 # game = Game.new(test_grid)
-# game.display_board(game.grid, 6)
+# game.display_board(game.grid, 6, Player.new('Yves', '◉'), Player.new('Chuu', '○'))
+
+game = Game.new()
+game.play_game

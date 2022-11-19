@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# connect four game
 class Game
   require_relative 'board'
   include Board
@@ -13,10 +14,21 @@ class Game
 
   attr_reader :maximum_height, :grid
 
+  def play_game
+    display_intro
+    set_players
+    @current_player = @player_a
+    game_loop
+    display_board(@grid, @maximum_height, @player_a, @player_b)
+    display_outro(@current_player, game_won?(@current_player.token), grid_full?)
+  end
+
   def game_loop
-    until game_won?(@current_player.token) || grid_full?
-      display_board(@grid, @maximum_height)
+    until grid_full?
+      display_board(@grid, @maximum_height, @player_a, @player_b)
       player_add_token(@current_player)
+      break if game_won?(@current_player.token)
+
       @current_player = @current_player == @player_a ? @player_b : @player_a
     end
   end
