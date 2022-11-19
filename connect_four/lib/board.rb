@@ -17,7 +17,7 @@ module Board
   def print_grid(grid, maximum_height)
     (maximum_height - 1).downto(0) do |row_num|
       # row = grid[row_num].join(' │ ')
-      print "│"
+      print '│'
       grid[row_num].each_char { |char| print " #{char} │" }
       puts ''
     end
@@ -30,7 +30,6 @@ module Board
   end
 
   def display_outro(winning_player, is_game_won, is_grid_full)
-    
     puts 'Nobody won! :O' if is_grid_full
     puts "#{winning_player.name} won! Congratulations!" if is_game_won
   end

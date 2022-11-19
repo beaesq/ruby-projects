@@ -4,7 +4,7 @@ require_relative '../lib/main'
 
 describe Game do
   subject(:new_game) { described_class.new }
-  
+
   describe '#make_grid' do
     it 'can create a grid with 7 columns with a maximum height of 6' do
       grid_array = new_game.make_grid
@@ -91,7 +91,7 @@ describe Game do
       end
     end
   end
-  
+
   describe '#win_vertical?' do
     context 'when four tokens connect vertically' do
       before do
@@ -255,10 +255,6 @@ describe Game do
       end
     end
   end
-
-  # describe '#play_game' do
-    
-  # end
 
   describe '#player_add_token' do
     test_grid = ['', '○', '○', '○', '', '', '']
